@@ -12,6 +12,7 @@ import {
     X,
 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
+import Swal from "sweetalert2"
 import { useAuth } from "../../context/AuthContext"
 import { useUpdateKyc } from "../../hooks/kyc/updateKyc"
 import { getAuthUse } from "../../hooks/user/getAuthUse"

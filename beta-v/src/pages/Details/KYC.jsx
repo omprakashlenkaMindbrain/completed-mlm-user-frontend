@@ -56,12 +56,12 @@ export default function KYCPage() {
 
       setAadhaar(null);
       setPan(null);
-    } catch (err) {
+    } catch (err) {     
       //Error Alert
       Swal.fire({
         icon: "error",
-        title: "You have alredy uploded your file",
-        text: err?.message || "Something went wrong. Please try again.",
+        title: "You have alredy uploaded your file",
+        // text: err.msg ",
         confirmButtonColor: ERROR_COLOR, 
       });
     } finally {

@@ -30,7 +30,7 @@ export const useUpdateKyc = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to update KYC");
+        throw new Error(data.msg || "Failed to update KYC");
       }
 
       setSuccess(true);

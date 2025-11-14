@@ -142,6 +142,9 @@ export default function SignupPage() {
                 onChange={handleChange}
                 maxLength={name === "mobno" ? 10 : undefined}
                 className={inputClass}
+                style={{
+                  textTransform:"capitalize",
+                }}
               />
             </div>
           ))}

@@ -28,14 +28,15 @@ export const useKycUpload = () => {
 
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.message || "Upload failed");
+        throw new Error(errData.msg || "Upload failed");
       }
 
       const responseData = await res.json();
       setData(responseData);
       return responseData;
     } catch (err) {
-      setError(err.message);
+      console.log("Hello")
+      setError(err.msg);
       throw err;
     } finally {
       setLoading(false);

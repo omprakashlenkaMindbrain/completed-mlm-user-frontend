@@ -10,6 +10,9 @@ export default function Home() {
   const bgLight = "#f8fafc"; 
   const primaryColor = "#004aad";
 
+  console.log("hii");
+  
+
   return (
     <div className="relative min-h-screen overflow-hidden">
       <motion.div
@@ -25,6 +28,8 @@ export default function Home() {
       <TestimonialsSection />
 
       <Footer />
+
+
     </div>
   );
 }

@@ -199,7 +199,7 @@ export const AuthProvider = ({ children }) => {
 
       // Call Backend API
       try {
-        await fetch("http://localhost:8030/api/sessions", {
+        await fetch("http://[2a02:4780:12:b6cb::1]:8030/api/sessions", {
           method: "DELETE",
           headers: {
             "Authorization": `Bearer ${getaccesstoken}`,

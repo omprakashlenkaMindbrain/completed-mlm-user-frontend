@@ -3,7 +3,7 @@ import { useCallback } from "react";
 export const getAuthUse = () => {
   const getLoggedinuser = useCallback(async (token) => {
     try {
-      const res = await fetch("http://localhost:8030/api/sessions", {
+      const res = await fetch("http://[2a02:4780:12:b6cb::1]:8030/api/sessions", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

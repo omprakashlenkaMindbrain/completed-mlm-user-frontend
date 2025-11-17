@@ -13,7 +13,7 @@ export const useEditUser = () => {
     setSuccessMsg(null);
 
     try {
-      const res = await fetch("http://localhost:8030/api/users/me", {
+      const res = await fetch("http://[2a02:4780:12:b6cb::1]:8030/api/users/me", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

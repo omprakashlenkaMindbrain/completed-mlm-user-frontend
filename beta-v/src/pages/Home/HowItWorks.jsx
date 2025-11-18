@@ -5,7 +5,7 @@ import { useInView } from "react-intersection-observer";
 const steps = [
   {
     title: "Sign Up",
-    text: "Create your free account to get started as an affiliate with BM2 Mall.",
+    text: "Create your free account to get started as an affiliate with BMPL.",
     icon: "📝",
   },
   {

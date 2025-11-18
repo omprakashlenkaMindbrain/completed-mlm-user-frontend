@@ -11,7 +11,7 @@ export const useSignup = () => {
     setSuccess(false);
 
     try {
-      const res = await fetch("http://[2a02:4780:12:b6cb::1]:8030/api/users", {
+      const res = await fetch("https://api.mybmpl.com/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

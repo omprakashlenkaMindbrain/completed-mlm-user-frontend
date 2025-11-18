@@ -10,7 +10,7 @@ export const useGetQr = () => {
     setError(null);
 
     try {
-      const res = await fetch("http://[2a02:4780:12:b6cb::1]:8030/admin/qr", {
+      const res = await fetch("https://api.mybmpl.com/api/admin/qr", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

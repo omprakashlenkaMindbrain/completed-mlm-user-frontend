@@ -18,7 +18,7 @@ export const useKycUpload = () => {
       formData.append("adhara_img", adharFile);
       formData.append("pan_img", panFile);    
 
-      const res = await fetch("http://[2a02:4780:12:b6cb::1]:8030/kyc/upload", {
+      const res = await fetch("https://api.mybmpl.com/api/kyc/upload", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getaccesstoken}`, 

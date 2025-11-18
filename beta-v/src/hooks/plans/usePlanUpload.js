@@ -20,7 +20,7 @@ export const usePlanUpload = () => {
       formData.append("plan_name", plan_name);
       formData.append("payment_ss", paymentFile);
 
-      const res = await fetch("http://[2a02:4780:12:b6cb::1]:8030/plan", {
+      const res = await fetch("https://api.mybmpl.com/api/plan", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getaccesstoken}`,

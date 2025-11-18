@@ -29,7 +29,7 @@ export default function HeroSection() {
           className="text-3xl sm:text-4xl font-extrabold mb-4 leading-snug drop-shadow-md"
           style={{ color: PRIMARY_NAVY }}
         >
-          Grow Your Income with BM2 Mall's MLM Platform
+          Grow Your Income with BMPL MLM Platform
         </h1>
         <p className="text-gray-700 mb-6 text-base sm:text-lg max-w-lg mx-auto lg:mx-0">
           Join our thriving network and start earning instantly. Build your team, unlock bonuses, and watch your

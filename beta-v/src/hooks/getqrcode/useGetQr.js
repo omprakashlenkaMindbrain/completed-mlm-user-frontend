@@ -20,7 +20,7 @@ export const useGetQr = () => {
 
       if (!res.ok) throw new Error(data.message || "Failed to fetch QR data");
 
-      // ✅ Extract QR image URL properly
+      //  Extract QR image URL properly
       const qrUrl =
         data && data.qr && Array.isArray(data.qr) && data.qr.length > 0
           ? data.qr[0].qr

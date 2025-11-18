@@ -12,7 +12,7 @@ export const usePlanUpload = () => {
     setError(null);
 
     try {
-      // 🔹 Validation checks
+      // Validation checks
       if (!plan_name) throw new Error("Please select a plan");
       if (!paymentFile) throw new Error("Please upload a payment screenshot");
 
@@ -31,7 +31,7 @@ export const usePlanUpload = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        // 🔹 Handle duplicate or validation errors gracefully
+        // Handle duplicate or validation errors gracefully
         if (res.status === 409 || data.msg?.includes("duplicate")) {
           await Swal.fire({
             icon: "warning",
@@ -50,7 +50,7 @@ export const usePlanUpload = () => {
         throw new Error(data.msg || "Plan upload failed");
       }
 
-      // 🔹 Success alert
+      // Success alert
       await Swal.fire({
         icon: "success",
         title: "Plan Uploaded Successfully!",

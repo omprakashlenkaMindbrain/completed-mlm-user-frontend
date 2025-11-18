@@ -29,6 +29,6 @@ export default function KycProtectedRoute({ children }) {
     );
   }
 
-  // 👉 If approved, show the plan page
+  // If approved, show the plan page
   return children;
 }

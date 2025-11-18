@@ -7,7 +7,7 @@ import { useSignup } from "../hooks/user/useSignup";
 
 const AuthContext = createContext();
 
-// 🔐 Secret key for lightweight obfuscation (keep short & random)
+// Secret key for lightweight obfuscation (keep short & random)
 const SECRET_KEY = "bmpl@2025";
 
 // Helper: Encode token before storing
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
   const logoutTimerRef = useRef(null);
 
-  // 🔹 Check session validity on reload
+  // Check session validity on reload
   useEffect(() => {
     const storedLogin = sessionStorage.getItem("isLoggedIn");
     const storedExpiry = sessionStorage.getItem("loginExpiry");
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
     return () => clearTimeout(logoutTimerRef.current);
   }, []);
 
-  // 🔹 Auto logout after expiry
+  // Auto logout after expiry
   const handleSessionExpiry = async () => {
     sessionStorage.removeItem("isLoggedIn");
     sessionStorage.removeItem("loginExpiry");
@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }) => {
     navigate("/login");
   };
 
-  // 🔹 Handle Signup (unchanged)
+  // Handle Signup (unchanged)
   const signup = async (formData) => {
     setLoading(true);
     setError(null);

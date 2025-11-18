@@ -6,7 +6,7 @@ const testimonials = [
     name: "Amit Sharma",
     role: "Affiliate Partner",
     message:
-      "BM2 Mall completely changed my income journey. The dashboard is smooth and the referral system is very transparent.",
+      "BMPL Mall completely changed my income journey. The dashboard is smooth and the referral system is very transparent.",
   },
   {
     name: "Priya Verma",

@@ -50,7 +50,7 @@ const Navbar = () => {
       }}
     >
       <div className="max-w-[1440px] mx-auto px-6 py-3 flex justify-between items-center relative">
-        {/* ✅ Logo Section */}
+        {/* Logo Section */}
         <div
           className="flex items-center gap-3 cursor-pointer"
           onClick={() => navigate("/")}
@@ -74,7 +74,7 @@ const Navbar = () => {
           </motion.span>
         </div>
 
-        {/* ✅ Desktop Menu */}
+        {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8 relative">
           {navLinks.map(({ name, path, icon: Icon }) => {
             const isActive = location.pathname === path;
@@ -114,7 +114,7 @@ const Navbar = () => {
             );
           })}
 
-          {/* ✅ Auth Buttons */}
+          {/* Auth Buttons */}
           {isLoggedIn ? (
             <motion.button
               onClick={handleLogout}

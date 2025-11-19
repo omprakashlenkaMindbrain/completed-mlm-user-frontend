@@ -2,7 +2,6 @@ import { CheckCircle, Loader2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
-import KycProtectedRoute from "../../context/kycProtectRoute";
 import { useGetQr } from "../../hooks/getqrcode/useGetQr";
 import { usePlanUpload } from "../../hooks/plans/usePlanUpload";
 
@@ -144,7 +143,6 @@ export default function Plans() {
 
   return (
     <>
-      <KycProtectedRoute>
         <div className="relative min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-100 via-transparent to-teal-100 opacity-30 animate-[pulse_6s_ease-in-out_infinite] blur-2xl"></div>
 
@@ -307,7 +305,6 @@ export default function Plans() {
             </div>
           </div>
         )}
-      </KycProtectedRoute>
     </>
   );
 }

@@ -7,7 +7,6 @@ import {
 
 import Navbar from "../components/Navbar";
 import { AuthProvider } from "../context/AuthContext";
-import KycProtectedRoute from "../context/kycProtectRoute";
 import ProtectedRoute from "../context/ProtectedRoute";
 import LoginPage from "../pages/Authentication/Login";
 import SignupPage from "../pages/Authentication/Signup";
@@ -39,9 +38,7 @@ function Layout() {
           path="/plans"
           element={
             <ProtectedRoute>
-              <KycProtectedRoute>
                 <Plans />
-              </KycProtectedRoute>
             </ProtectedRoute>
           }
         />

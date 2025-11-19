@@ -25,7 +25,7 @@ const ICON_COLOR_CONTACT = "#1D9E74"
 
 export default function ProfilePage() {
     const { getaccesstoken } = useAuth();
-    
+
     const { getLoggedinuser } = getAuthUse()
     const { editUser, loading: saving, error: saveError, successMsg } = useEditUser()
 
@@ -299,21 +299,49 @@ export default function ProfilePage() {
                                         <label className="block text-sm font-semibold text-slate-700 mb-2 capitalize">
                                             {field === "mobno" ? "Mobile Number" : field}
                                         </label>
+
                                         <input
                                             type={field === "email" ? "email" : "text"}
                                             name={field}
                                             value={profile[field] || ""}
-                                            onChange={handleChange}
+                                            onChange={(e) => {
+                                                let value = e.target.value;
+
+                                                // Mobile Number Validation
+                                                if (field === "mobno") {
+                                                    value = value.replace(/\D/g, ""); // only digits
+                                                    if (value.length > 10) value = value.slice(0, 10); // max 10 digits
+                                                }
+
+                                                // Capitalize name automatically
+                                                if (field === "name") {
+                                                    value = value.replace(/\b\w/g, (c) => c.toUpperCase());
+                                                }
+
+                                                handleChange({
+                                                    target: {
+                                                        name: field,
+                                                        value,
+                                                    },
+                                                });
+                                            }}
+                                            maxLength={field === "mobno" ? 10 : undefined}
                                             readOnly={!isEditing}
                                             className={`w-full px-4 py-2 rounded-lg font-medium transition ${isEditing
-                                                ? `bg-slate-50 border-2 border-[${PRIMARY_NAVY}] focus:outline-none focus:border-blue-700`
-                                                : "bg-slate-50 border border-slate-200 text-slate-700 cursor-default"
-                                                }`}
-                                            style={isEditing ? { borderColor: modified ? ICON_COLOR_CONTACT : PRIMARY_NAVY } : {}}
+                                                    ? `bg-slate-50 border-2 border-[${PRIMARY_NAVY}] focus:outline-none focus:border-blue-700`
+                                                    : "bg-slate-50 border border-slate-200 text-slate-700 cursor-default"
+                                                } ${field === "name" ? "capitalize" : ""
+                                                }`} // Apply capitalize style for name
+                                            style={
+                                                isEditing
+                                                    ? { borderColor: modified ? ICON_COLOR_CONTACT : PRIMARY_NAVY }
+                                                    : {}
+                                            }
                                         />
                                     </div>
                                 ))}
                             </div>
+
                         </div>
 
                         {/* Plan & Tracking */}

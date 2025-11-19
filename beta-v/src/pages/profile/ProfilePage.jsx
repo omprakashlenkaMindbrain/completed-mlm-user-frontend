@@ -25,7 +25,7 @@ const ICON_COLOR_CONTACT = "#1D9E74"
 
 export default function ProfilePage() {
     const { getaccesstoken } = useAuth();
-
+    
     const { getLoggedinuser } = getAuthUse()
     const { editUser, loading: saving, error: saveError, successMsg } = useEditUser()
 
@@ -293,40 +293,27 @@ export default function ProfilePage() {
                             {saveError && <p className="text-red-600 mb-2">{saveError}</p>}
                             {successMsg && <p className="text-green-700 mb-2">{successMsg}</p>}
 
-                            <input
-                                type={field === "email" ? "email" : "text"}
-                                name={field}
-                                value={profile[field] || ""}
-                                onChange={(e) => {
-                                    let value = e.target.value;
-
-                                    if (field === "mobno") {
-                                        // Allow only numbers
-                                        value = value.replace(/\D/g, "");
-
-                                        // Limit to 10 digits
-                                        if (value.length > 10) value = value.slice(0, 10);
-
-                                        handleChange({
-                                            target: { name: "mobno", value }
-                                        });
-                                        return;
-                                    }
-
-                                    handleChange(e);
-                                }}
-                                readOnly={!isEditing}
-                                className={`w-full px-4 py-2 rounded-lg font-medium transition ${isEditing
-                                        ? `bg-slate-50 border-2 border-[${PRIMARY_NAVY}] focus:outline-none focus:border-blue-700`
-                                        : "bg-slate-50 border border-slate-200 text-slate-700 cursor-default"
-                                    }`}
-                                style={
-                                    isEditing
-                                        ? { borderColor: modified ? ICON_COLOR_CONTACT : PRIMARY_NAVY }
-                                        : {}
-                                }
-                            />
-
+                            <div className="space-y-4">
+                                {["name", "email", "mobno"].map((field) => (
+                                    <div key={field}>
+                                        <label className="block text-sm font-semibold text-slate-700 mb-2 capitalize">
+                                            {field === "mobno" ? "Mobile Number" : field}
+                                        </label>
+                                        <input
+                                            type={field === "email" ? "email" : "text"}
+                                            name={field}
+                                            value={profile[field] || ""}
+                                            onChange={handleChange}
+                                            readOnly={!isEditing}
+                                            className={`w-full px-4 py-2 rounded-lg font-medium transition ${isEditing
+                                                ? `bg-slate-50 border-2 border-[${PRIMARY_NAVY}] focus:outline-none focus:border-blue-700`
+                                                : "bg-slate-50 border border-slate-200 text-slate-700 cursor-default"
+                                                }`}
+                                            style={isEditing ? { borderColor: modified ? ICON_COLOR_CONTACT : PRIMARY_NAVY } : {}}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
                         {/* Plan & Tracking */}

@@ -1,200 +1,139 @@
-"use client"
+import { ChevronDown, ChevronUp, Loader, Users, X } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+import BASE_URL from "../config/api"
+import { useAuth } from "../context/AuthContext"
 
-import { ChevronDown, ChevronUp, Users, X } from "lucide-react"
-import { useRef, useState } from "react"
-
-const PRIMARY_NAVY = "#1B436D"
+const PRIMARY_NAVY = "#0F172A"
 const ACCENT_YELLOW = "#FDBB2D"
-const GREEN_LOGGED_IN = "#1D9E74"
-const YELLOW_REFERRED = "#FDBB2D"
+const GREEN_LOGGED_IN = "#16A34A"
+const YELLOW_REFERRED = "#FACC15"
 
-const NAMES = [
-  "Arjun Kumar",
-  "Priya Singh",
-  "Rajesh Patel",
-  "Ananya Gupta",
-  "Vikram Sharma",
-  "Neha Reddy",
-  "Aditya Kapoor",
-  "Divya Iyer",
-  "Harsh Verma",
-  "Pooja Nair",
-  "Sanjay Roy",
-  "Isha Banerjee",
-  "Rohan Chopra",
-  "Maya Malhotra",
-  "Karan Desai",
-  "Zara Mehta",
-  "Nikhil Rao",
-  "Shreya Joshi",
-  "Akshay Kulkarni",
-  "Riya Saxena",
-  "Abhishek Singh",
-  "Sonam Patel",
-  "Vihaan Sharma",
-  "Nisha Kapoor",
-  "Arun Iyer",
-  "Sneha Gupta",
-  "Deepak Verma",
-  "Anjali Nair",
-  "Varun Desai",
-  "Kavya Sharma",
-  "Manish Patel",
-  "Ritika Verma",
-  "Siddharth Gupta",
-  "Meera Nair",
-  "Prateek Roy",
-  "Anjana Singh",
-  "Rahul Kapoor",
-  "Swati Iyer",
-  "Vikas Kumar",
-  "Neelam Desai",
-  "Sandeep Chopra",
-  "Eesha Malhotra",
-  "Aryan Rao",
-  "Divyanshu Joshi",
-  "Naman Saxena",
-]
-
-const generateBinaryTreeData = () => {
-  let counter = 1000
-
-  const createNode = (depth = 0, maxDepth = 4) => {
-    if (depth >= maxDepth) return null
-
-    const name = NAMES[Math.floor(Math.random() * NAMES.length)]
-    const id = `REF-${counter++}`
-    const isReferred = depth > 0
-
-    const probability = 0.8 - depth * 0.15
-    const hasLeft = Math.random() < probability
-    const hasRight = Math.random() < probability
-
-    return {
-      id,
-      name,
-      email: name.toLowerCase().replace(" ", ".") + "@email.com",
-      isReferred,
-      left: hasLeft ? createNode(depth + 1, maxDepth) : null,
-      right: hasRight ? createNode(depth + 1, maxDepth) : null,
-    }
-  }
+//
+// AUTO-SHRINK NODE SIZES BY DEPTH
+//
+const getResponsiveSize = (level) => {
+  const scale = Math.max(0.35, 1 - level * 0.06)  // decreases smoothly per level
 
   return {
-    id: "USER-001",
-    name: "You",
-    email: "you@email.com",
-    isReferred: false,
-    left: createNode(1, 4),
-    right: createNode(1, 4),
+    scale,
+    cardPadding: `${8 * scale}px ${12 * scale}px`,
+    avatar: `${40 * scale}px`,
+    nameSize: `${14 * scale}px`,
+    idSize: `${10 * scale}px`,
+    gap: `${6 * scale}px`,
   }
 }
 
+//
+// TRANSFORM API NODE
+//
+const transformApiNode = (apiNode, depth = 0) => {
+  if (!apiNode) return null
+
+  return {
+    id: apiNode.memId,
+    name: apiNode.name,
+    memId: apiNode.memId,
+    isReferred: depth > 0,
+    left: transformApiNode(apiNode.leftLeg, depth + 1),
+    right: transformApiNode(apiNode.rightLeg, depth + 1),
+  }
+}
+
+//
+// TREE NODE COMPONENT
+//
 const TreeNode = ({ node, onToggle, expanded, level = 0 }) => {
   if (!node) return null
 
   const hasChildren = node.left || node.right
   const isExpanded = expanded.has(node.id)
   const isRoot = !node.isReferred
-
   const bgColor = isRoot ? GREEN_LOGGED_IN : YELLOW_REFERRED
 
-  const sizes = {
-    0: { card: "w-44 px-4 py-3", text: "text-sm", avatar: "w-11 h-11", gap: "gap-3" },
-    1: { card: "w-40 px-3 py-2.5", text: "text-xs", avatar: "w-10 h-10", gap: "gap-2.5" },
-    2: { card: "w-36 px-3 py-2", text: "text-xs", avatar: "w-9 h-9", gap: "gap-2" },
-    3: { card: "w-32 px-2.5 py-2", text: "text-xs", avatar: "w-8 h-8", gap: "gap-2" },
-    4: { card: "w-28 px-2 py-1.5", text: "text-xs", avatar: "w-7 h-7", gap: "gap-1.5" },
-  }
-
-  const currentSize = sizes[Math.min(level, 4)]
+  const size = getResponsiveSize(level)
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div
-        className={`${currentSize.card} rounded-xl transition-all duration-300 cursor-pointer border-3 border-white shadow-xl hover:shadow-2xl hover:scale-110 transform relative group`}
-        style={{
-          backgroundColor: bgColor,
-          transformOrigin: "top center",
-        }}
-        onClick={() => hasChildren && onToggle(node.id)}
-      >
-        <div className={`flex items-center ${currentSize.gap}`}>
-          <div
-            className={`${currentSize.avatar} rounded-full flex items-center justify-center font-bold text-white flex-shrink-0 border-3 border-white text-xs shadow-md`}
-            style={{ backgroundColor: `${bgColor}95` }}
-          >
-            {node.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
+    <div className="flex flex-col items-center">
+      {level > 0 && <div className="w-px h-6 bg-slate-300 mb-2" />}
+
+      <div className="relative flex flex-col items-center">
+        <div
+          className="rounded-xl border border-white/80 shadow-xl cursor-pointer group transition-all"
+          style={{
+            transform: `scale(${size.scale})`,
+            background: `linear-gradient(135deg, ${bgColor}, ${bgColor}cc)`,
+            padding: size.cardPadding,
+          }}
+          onClick={() => hasChildren && onToggle(node.id)}
+        >
+          <div className="flex items-center" style={{ gap: size.gap }}>
+            <div
+              className="rounded-full flex items-center justify-center font-bold text-white border border-white/70 shadow-md"
+              style={{
+                width: size.avatar,
+                height: size.avatar,
+                backgroundColor: `${bgColor}aa`,
+                fontSize: size.nameSize,
+              }}
+            >
+              {node.name?.split(" ").map((n) => n[0]).join("")}
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <p
+                className="font-semibold text-white truncate leading-tight"
+                style={{ fontSize: size.nameSize }}
+              >
+                {node.name}
+              </p>
+              <p
+                className="text-white/90 font-mono truncate leading-tight"
+                style={{ fontSize: size.idSize }}
+              >
+                {node.id}
+              </p>
+            </div>
           </div>
 
-          {/* Info */}
-          <div className="min-w-0 flex-1">
-            <p className={`${currentSize.text} font-bold text-white truncate leading-tight`}>{node.name}</p>
-            <p className="text-xs opacity-85 font-mono truncate text-white leading-tight">{node.id}</p>
-          </div>
+          {hasChildren && (
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white p-1 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+              {isExpanded ? (
+                <ChevronUp className="w-4 h-4" style={{ color: bgColor }} />
+              ) : (
+                <ChevronDown className="w-4 h-4" style={{ color: bgColor }} />
+              )}
+            </div>
+          )}
         </div>
-
-        {hasChildren && (
-          <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-full p-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-            {isExpanded ? (
-              <ChevronUp className="w-4 h-4" style={{ color: bgColor }} />
-            ) : (
-              <ChevronDown className="w-4 h-4" style={{ color: bgColor }} />
-            )}
-          </div>
-        )}
       </div>
 
-      {/* Children Container */}
+      {/* CHILDREN */}
       {hasChildren && isExpanded && (
-        <div className="flex flex-col items-center gap-3 sm:gap-4">
-          {/* Vertical connector */}
-          <div
-            className="w-1.5 bg-gradient-to-b from-slate-400 to-slate-300 rounded-full"
-            style={{ height: level < 2 ? "24px" : "20px" }}
-          ></div>
+        <div className="mt-6">
+          <div className="flex justify-center">
+            <div className="w-px h-6 bg-slate-300" />
+          </div>
 
-          {/* Left and Right children wrapper */}
-          <div className="flex gap-6 sm:gap-8 md:gap-12 items-start">
-            {/* Left Branch */}
+          <div className="relative mt-1 flex items-start justify-center">
+            <div className="absolute top-0 left-0 right-0 h-px bg-slate-300" />
+
             {node.left && (
-              <div className="flex flex-col items-center relative">
-                {/* Connecting line for left child */}
-                <div
-                  className="absolute bottom-full left-full transform translate-y-full -translate-x-full border-l-3 border-b-3 border-slate-400 rounded-bl-2xl"
-                  style={{
-                    width: level < 2 ? "40px" : "32px",
-                    height: level < 2 ? "28px" : "24px",
-                  }}
-                ></div>
-
-                <div className="mb-2 px-2.5 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full text-xs font-bold shadow-lg whitespace-nowrap">
-                  ← LEFT
-                </div>
-
+              <div className="flex flex-col items-center mr-10 pt-3">
+                <div className="w-px h-4 bg-slate-300 mb-1" />
+                <span className="mb-2 px-2 py-0.5 rounded-full bg-blue-600 text-[10px] text-white">
+                  LEFT
+                </span>
                 <TreeNode node={node.left} onToggle={onToggle} expanded={expanded} level={level + 1} />
               </div>
             )}
 
-            {/* Right Branch */}
             {node.right && (
-              <div className="flex flex-col items-center relative">
-                {/* Connecting line for right child */}
-                <div
-                  className="absolute bottom-full right-full transform translate-y-full translate-x-full border-r-3 border-b-3 border-slate-400 rounded-br-2xl"
-                  style={{
-                    width: level < 2 ? "40px" : "32px",
-                    height: level < 2 ? "28px" : "24px",
-                  }}
-                ></div>
-
-                <div className="mb-2 px-2.5 py-1 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full text-xs font-bold shadow-lg whitespace-nowrap">
-                  RIGHT →
-                </div>
-
+              <div className="flex flex-col items-center ml-10 pt-3">
+                <div className="w-px h-4 bg-slate-300 mb-1" />
+                <span className="mb-2 px-2 py-0.5 rounded-full bg-purple-600 text-[10px] text-white">
+                  RIGHT
+                </span>
                 <TreeNode node={node.right} onToggle={onToggle} expanded={expanded} level={level + 1} />
               </div>
             )}
@@ -205,94 +144,156 @@ const TreeNode = ({ node, onToggle, expanded, level = 0 }) => {
   )
 }
 
-export default function ReferralTreeModal({ isOpen, onClose }) {
-  const [treeData] = useState(() => generateBinaryTreeData())
-  const [expandedNodes, setExpandedNodes] = useState(new Set(["USER-001"]))
-  const scrollContainerRef = useRef(null)
+//
+// MAIN MODAL
+//
+export default function ReferralTreeModal({ isOpen, onClose, loggedInUserId }) {
+  const [treeData, setTreeData] = useState(null)
+  const [expandedNodes, setExpandedNodes] = useState(new Set())
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const scrollRef = useRef(null)
 
-  const toggleNode = (nodeId) => {
-    const newExpanded = new Set(expandedNodes)
-    if (newExpanded.has(nodeId)) {
-      newExpanded.delete(nodeId)
-    } else {
-      newExpanded.add(nodeId)
+  const { getaccesstoken } = useAuth()
+
+  // ZOOM + PAN STATES
+  const [zoom, setZoom] = useState(1)
+  const [pan, setPan] = useState({ x: 0, y: 0 })
+  const isDragging = useRef(false)
+  const dragStart = useRef({ x: 0, y: 0 })
+
+  //
+  // FETCH TREE
+  //
+  useEffect(() => {
+    if (!isOpen || !loggedInUserId) return
+
+    const fetchTreeData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+
+        const token = getaccesstoken
+
+        const res = await fetch(`${BASE_URL}/api/showdownline/${loggedInUserId}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        })
+
+        if (!res.ok) throw new Error("Failed to fetch referral tree")
+
+        const result = await res.json()
+
+        if (result.success && result.data) {
+          const transformed = transformApiNode(result.data)
+          setTreeData(transformed)
+          setExpandedNodes(new Set([transformed.id]))
+        } else throw new Error(result.message)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
     }
-    setExpandedNodes(newExpanded)
-  }
+
+    fetchTreeData()
+  }, [isOpen, loggedInUserId])
+
+  const toggleNode = (id) =>
+    setExpandedNodes((prev) => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
 
   if (!isOpen) return null
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-60 z-40 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-40" onClick={onClose} />
 
-      <div className="fixed inset-0 flex items-center justify-center z-50 p-2 sm:p-4">
-        <div
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col border-3"
+      <div className="fixed inset-0 flex items-center justify-center z-50 p-4" onClick={(e) => e.stopPropagation()}>
+        <div className="bg-white rounded-2xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col border"
           style={{ borderColor: ACCENT_YELLOW }}
         >
+          {/* HEADER */}
+          <div className="px-6 py-3 border-b flex items-center justify-between"
+            style={{ backgroundColor: PRIMARY_NAVY, borderColor: ACCENT_YELLOW }}
+          >
+            <div className="flex items-center gap-3">
+              <Users className="w-6 h-6 text-white" />
+              <h2 className="text-lg font-semibold text-white">Binary Referral Network</h2>
+            </div>
+            <button onClick={onClose} className="p-1 hover:bg-white/10 rounded">
+              <X className="w-5 h-5 text-white" />
+            </button>
+          </div>
+
+          {/* ZOOM BUTTONS */}
+          <div className="absolute top-24 right-6 z-50 flex flex-col gap-2">
+            <button onClick={() => setZoom((z) => Math.min(2, z + 0.1))}
+              className="px-3 py-1 bg-gray-800 text-white rounded">+</button>
+            <button onClick={() => setZoom((z) => Math.max(0.3, z - 0.1))}
+              className="px-3 py-1 bg-gray-800 text-white rounded">−</button>
+            <button onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }) }}
+              className="px-3 py-1 bg-gray-800 text-white rounded text-xs">Reset</button>
+          </div>
+
+          {/* TREE AREA */}
           <div
-            className="px-4 sm:px-6 py-3 border-b-2 flex-shrink-0"
-            style={{
-              backgroundColor: PRIMARY_NAVY,
-              borderColor: ACCENT_YELLOW,
+            ref={scrollRef}
+            className="flex-1 overflow-auto px-10 py-8 bg-gradient-to-br from-slate-50 via-blue-50/40 to-slate-100"
+            style={{ cursor: isDragging.current ? "grabbing" : "grab" }}
+            onMouseDown={(e) => {
+              isDragging.current = true
+              dragStart.current = { x: e.clientX - pan.x, y: e.clientY - pan.y }
+            }}
+            onMouseMove={(e) => {
+              if (!isDragging.current) return
+              setPan({ x: e.clientX - dragStart.current.x, y: e.clientY - dragStart.current.y })
+            }}
+            onMouseUp={() => (isDragging.current = false)}
+            onMouseLeave={() => (isDragging.current = false)}
+            onWheel={(e) => {
+              e.preventDefault()
+              setZoom((z) => Math.min(2, Math.max(0.3, z - e.deltaY * 0.001)))
             }}
           >
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 min-w-0 flex-1">
-                <Users className="w-6 h-6 text-white flex-shrink-0" />
-                <h2 className="text-xl sm:text-2xl font-bold text-white truncate">Binary Referral Network</h2>
+            {loading && (
+              <div className="flex items-center justify-center h-full">
+                <Loader className="w-8 h-8 animate-spin" />
               </div>
+            )}
 
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-all flex-shrink-0"
+            {error && (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-red-600">{error}</p>
+              </div>
+            )}
+
+            {!loading && treeData && (
+              <div
+                className="min-w-full flex justify-center"
+                style={{
+                  transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+                  transformOrigin: "center center",
+                  transition: "transform 0.1s ease-out",
+                }}
               >
-                <X className="w-6 h-6 text-white" />
-              </button>
-            </div>
+                <TreeNode node={treeData} expanded={expandedNodes} onToggle={toggleNode} />
+              </div>
+            )}
           </div>
 
-          {/* Tree Container - Scrollable */}
-          <div
-            ref={scrollContainerRef}
-            className="flex-1 overflow-auto p-6 sm:p-8 md:p-12 bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50"
-          >
-            <div className="flex justify-center">
-              <TreeNode node={treeData} onToggle={toggleNode} expanded={expandedNodes} />
-            </div>
-          </div>
-
-          <div
-            className="px-4 sm:px-6 py-3 border-t-2 bg-white flex-shrink-0 flex items-center gap-4 sm:gap-6 text-xs overflow-x-auto"
+          {/* FOOTER */}
+          <div className="px-6 py-3 border-t bg-white text-xs flex gap-6"
             style={{ borderColor: ACCENT_YELLOW }}
           >
-            <span className="font-bold text-slate-800 uppercase whitespace-nowrap">Legend:</span>
-
-            <div className="flex items-center gap-2 whitespace-nowrap">
-              <div
-                className="w-4 h-4 rounded-full border-2 border-white flex-shrink-0 shadow-sm"
-                style={{ backgroundColor: GREEN_LOGGED_IN }}
-              ></div>
-              <span className="text-slate-700 font-medium">You</span>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: GREEN_LOGGED_IN }} /> You
             </div>
-
-            <div className="flex items-center gap-2 whitespace-nowrap">
-              <div
-                className="w-4 h-4 rounded-full border-2 border-white flex-shrink-0 shadow-sm"
-                style={{ backgroundColor: YELLOW_REFERRED }}
-              ></div>
-              <span className="text-slate-700 font-medium">Referrals</span>
-            </div>
-
-            <div className="flex items-center gap-2 whitespace-nowrap">
-              <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex-shrink-0 shadow-sm"></div>
-              <span className="text-slate-700 font-medium">Left Leg</span>
-            </div>
-
-            <div className="flex items-center gap-2 whitespace-nowrap">
-              <div className="w-4 h-4 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex-shrink-0 shadow-sm"></div>
-              <span className="text-slate-700 font-medium">Right Leg</span>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: YELLOW_REFERRED }} /> Referral
             </div>
           </div>
         </div>

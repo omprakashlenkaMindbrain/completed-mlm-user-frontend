@@ -16,18 +16,19 @@ import Logo from "../../assets/bmpl.jpg";
 import { useAuth } from "../../context/AuthContext";
 
 export default function SignupPage() {
-
   const PRIMARY_COLOR = "#004aad";
   const SECONDARY_COLOR = "#fdbb2d";
   const BG_LIGHT = "#f0f4f8";
 
   const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     mobno: "",
     trackingId: "",
     password: "",
+    legPosition: "", // <-- Added field
   });
 
   const { signup, loading, error } = useAuth();
@@ -45,7 +46,8 @@ export default function SignupPage() {
       !formData.email ||
       !formData.mobno ||
       !formData.trackingId ||
-      !formData.password
+      !formData.password ||
+      !formData.legPosition
     ) {
       Swal.fire({
         icon: "warning",
@@ -121,7 +123,7 @@ export default function SignupPage() {
               key={name}
               className="flex items-center gap-2 border-b border-gray-300 relative"
               style={{
-                borderBottomColor: 'rgb(209, 213, 219)',
+                borderBottomColor: "rgb(209, 213, 219)",
                 boxShadow: `0 1px 0 0 transparent`,
               }}
               onFocus={(e) => {
@@ -129,7 +131,7 @@ export default function SignupPage() {
                 e.currentTarget.style.boxShadow = `0 1px 0 0 ${PRIMARY_COLOR}`;
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderBottomColor = 'rgb(209, 213, 219)';
+                e.currentTarget.style.borderBottomColor = "rgb(209, 213, 219)";
                 e.currentTarget.style.boxShadow = `0 1px 0 0 transparent`;
               }}
             >
@@ -143,16 +145,17 @@ export default function SignupPage() {
                 maxLength={name === "mobno" ? 10 : undefined}
                 className={inputClass}
                 style={{
-                  textTransform: name === "name" ? "capitalize" : "none", // Only capitalize name
+                  textTransform: name === "name" ? "capitalize" : "none",
                 }}
               />
             </div>
           ))}
 
+          {/* --- Leg Position DROP DOWN --- */}
           <div
             className="flex items-center gap-2 border-b border-gray-300 relative"
             style={{
-              borderBottomColor: 'rgb(209, 213, 219)',
+              borderBottomColor: "rgb(209, 213, 219)",
               boxShadow: `0 1px 0 0 transparent`,
             }}
             onFocus={(e) => {
@@ -160,7 +163,36 @@ export default function SignupPage() {
               e.currentTarget.style.boxShadow = `0 1px 0 0 ${PRIMARY_COLOR}`;
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderBottomColor = 'rgb(209, 213, 219)';
+              e.currentTarget.style.borderBottomColor = "rgb(209, 213, 219)";
+              e.currentTarget.style.boxShadow = `0 1px 0 0 transparent`;
+            }}
+          >
+            <Hash size={18} className="text-gray-400" />
+            <select
+              name="legPosition"
+              value={formData.legPosition}
+              onChange={handleChange}
+              className="w-full px-3 py-2 text-sm outline-none bg-transparent"
+            >
+              <option value="">Select Leg Position</option>
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
+
+          {/* Password Field */}
+          <div
+            className="flex items-center gap-2 border-b border-gray-300 relative"
+            style={{
+              borderBottomColor: "rgb(209, 213, 219)",
+              boxShadow: `0 1px 0 0 transparent`,
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderBottomColor = PRIMARY_COLOR;
+              e.currentTarget.style.boxShadow = `0 1px 0 0 ${PRIMARY_COLOR}`;
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderBottomColor = "rgb(209, 213, 219)";
               e.currentTarget.style.boxShadow = `0 1px 0 0 transparent`;
             }}
           >
@@ -178,7 +210,7 @@ export default function SignupPage() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500"
               style={{
-                cursor: "pointer"
+                cursor: "pointer",
               }}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}

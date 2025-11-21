@@ -39,7 +39,7 @@ export default function ProfilePage() {
   const [error, setError] = useState("")
   const formRef = useRef(null)
   const [isReferralModalOpen, setIsReferralModalOpen] = useState(false)
-  const [referralTreeData, setReferralTreeData] = useState(null)
+  const [, setReferralTreeData] = useState(null)
 
   const { updateKyc, loading: uploading, error: uploadError, success } = useUpdateKyc()
   const [adharaFile, setAdharaFile] = useState(null)
@@ -62,7 +62,7 @@ export default function ProfilePage() {
       setAdharaFile(null)
       setPanFile(null)
     } else {
-      Swal.fire("You Can't Uplode", uploadError || "Failed to update KYC", "error")
+      Swal.fire("You Can't Uplod", uploadError || "Failed to update KYC", "error")
     }
   }
 
@@ -148,22 +148,22 @@ export default function ProfilePage() {
     fetchProfile()
   }, [getaccesstoken])
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (formRef.current && !formRef.current.contains(e.target)) {
-        setIsEditing(false)
-        setModified(false)
-      }
-    }
+  // useEffect(() => {
+  //   const handleClickOutside = (e) => {
+  //     if (formRef.current && !formRef.current.contains(e.target)) {
+  //       setIsEditing(false)
+  //       setModified(false)
+  //     }
+  //   }
 
-    if (isEditing) {
-      document.addEventListener("mousedown", handleClickOutside)
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
+  //   if (isEditing) {
+  //     document.addEventListener("mousedown", handleClickOutside)
+  //   } else {
+  //     document.removeEventListener("mousedown", handleClickOutside)
+  //   }
 
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [isEditing])
+  //   return () => document.removeEventListener("mousedown", handleClickOutside)
+  // }, [isEditing])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -259,8 +259,8 @@ export default function ProfilePage() {
               <button
                 onClick={() => setIsEditing(!isEditing)}
                 style={{
-                  backgroundColor: ACCENT_YELLOW_BUTTON,
-                  color: PRIMARY_NAVY,
+                  backgroundColor: "#FFD345",
+                  color: "#001F3F",
                   transition: "background-color 0.3s ease-in-out",
                 }}
                 className="self-start sm:self-center px-6 py-2 rounded-lg hover:bg-[#FFD966] transition font-semibold flex items-center gap-2 shadow-md"
@@ -278,6 +278,7 @@ export default function ProfilePage() {
                 )}
               </button>
             </div>
+
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 pt-6 border-t border-slate-200">
               <div>
                 <p className="text-sm text-slate-600">Joined</p>
@@ -287,7 +288,7 @@ export default function ProfilePage() {
               </div>
               <div>
                 <p className="text-sm text-slate-600">Plan</p>
-                <p className="font-semibold text-slate-900">{profile.plan?.plan_name || "no plans found"}</p>
+                <p className="font-semibold text-slate-900">{profile.plan?.plan_name || "no plan found"}</p>
               </div>
               <div>
                 <p className="text-sm text-slate-600">Referrals</p>
@@ -297,33 +298,33 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {profile.referralCount > 0 && (
-          <div
-            className="mb-8 bg-white rounded-2xl shadow-lg p-6 border-l-4"
-            style={{ borderColor: ICON_COLOR_CONTACT }}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Users className="w-6 h-6" style={{ color: ICON_COLOR_CONTACT }} />
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900">View Your Referral Network</h3>
-                  <p className="text-sm text-slate-600">See your binary tree structure of referrals</p>
-                </div>
+        {/* {profile.referralCount > 0 && ( */}
+        <div
+          className="mb-8 bg-white rounded-2xl shadow-lg p-6 border-l-4"
+          style={{ borderColor: ICON_COLOR_CONTACT }}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Users className="w-6 h-6" style={{ color: ICON_COLOR_CONTACT }} />
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">View Your Referral Network</h3>
+                <p className="text-sm text-slate-600">See your binary tree structure of referrals</p>
               </div>
-              <button
-                onClick={handleOpenReferralTree}
-                style={{
-                  backgroundColor: ICON_COLOR_CONTACT,
-                  color: "white",
-                }}
-                className="px-6 py-2 rounded-lg hover:opacity-90 transition font-semibold flex items-center gap-2 shadow-md"
-              >
-                <Users className="w-4 h-4" />
-                View Tree
-              </button>
             </div>
+            <button
+              onClick={handleOpenReferralTree}
+              style={{
+                backgroundColor: ICON_COLOR_CONTACT,
+                color: "white",
+              }}
+              className="px-6 py-2 rounded-lg hover:opacity-90 transition font-semibold flex items-center gap-2 shadow-md"
+            >
+              <Users className="w-4 h-4" />
+              View Tree
+            </button>
           </div>
-        )}
+        </div>
+        {/* )} */}
 
         {/* Editable Form & Details */}
         <div ref={formRef} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -411,11 +412,10 @@ export default function ProfilePage() {
                       }}
                       maxLength={field === "mobno" ? 10 : undefined}
                       readOnly={!isEditing}
-                      className={`w-full px-4 py-2 rounded-lg font-medium transition ${
-                        isEditing
+                      className={`w-full px-4 py-2 rounded-lg font-medium transition ${isEditing
                           ? `bg-slate-50 border-2 border-[${PRIMARY_NAVY}] focus:outline-none focus:border-blue-700`
                           : "bg-slate-50 border border-slate-200 text-slate-700 cursor-default"
-                      } ${field === "name" ? "capitalize" : ""}`}
+                        } ${field === "name" ? "capitalize" : ""}`}
                       style={isEditing ? { borderColor: modified ? ICON_COLOR_CONTACT : PRIMARY_NAVY } : {}}
                     />
                   </div>
@@ -430,7 +430,7 @@ export default function ProfilePage() {
                   <CreditCard className="w-5 h-5" style={{ color: ICON_COLOR_CONTACT }} /> Your Plan
                 </h3>
                 <p className="text-3xl font-bold mb-2" style={{ color: PRIMARY_NAVY }}>
-                  {profile.plan?.plan_name || "No plans found"}
+                  {profile.plan?.plan_name || "no plan found"}
                 </p>
                 <p className="text-sm" style={{ color: PRIMARY_NAVY }}>
                   Active subscription
@@ -466,13 +466,12 @@ export default function ProfilePage() {
                 {profile.kyc?.status ? (
                   <span
                     className={`px-3 py-1.5 rounded-full text-sm font-semibold
-          ${
-            profile.kyc.status === "approved"
-              ? "bg-green-100 text-green-700 border border-green-300"
-              : profile.kyc.status === "rejected"
-                ? "bg-red-100 text-red-700 border border-red-300"
-                : "bg-yellow-100 text-yellow-700 border border-yellow-300"
-          }`}
+          ${profile.kyc.status === "approved"
+                        ? "bg-green-100 text-green-700 border border-green-300"
+                        : profile.kyc.status === "rejected"
+                          ? "bg-red-100 text-red-700 border border-red-300"
+                          : "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                      }`}
                   >
                     {profile.kyc.status.charAt(0).toUpperCase() + profile.kyc.status.slice(1)}
                   </span>
@@ -551,9 +550,8 @@ export default function ProfilePage() {
                   <button
                     onClick={handleKycUpdate}
                     disabled={uploading}
-                    className={`w-full sm:w-auto px-6 py-2 rounded-lg font-semibold text-white transition flex items-center justify-center gap-2 ${
-                      uploading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
-                    }`}
+                    className={`w-full sm:w-auto px-6 py-2 rounded-lg font-semibold text-white transition flex items-center justify-center gap-2 ${uploading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+                      }`}
                   >
                     {uploading ? (
                       <>
@@ -579,11 +577,11 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {/* Pass profile.memId directly to the modal so it can fetch the tree */}
       <ReferralTreeModal
         isOpen={isReferralModalOpen}
         onClose={() => setIsReferralModalOpen(false)}
-        referralData={referralTreeData}
-        loggedInUserId={profile?.id}
+        loggedInUserId={profile?.memId}
       />
     </main>
   )

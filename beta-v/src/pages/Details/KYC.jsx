@@ -28,7 +28,7 @@ export default function KYCPage() {
         icon: "warning",
         title: "Missing Documents",
         text: "Please upload both Aadhaar and PAN card before submitting.",
-        confirmButtonColor: PRIMARY_COLOR, 
+        confirmButtonColor: PRIMARY_COLOR,
       });
       return;
     }
@@ -46,30 +46,30 @@ export default function KYCPage() {
     try {
       await uploadKyc({ adharFile: aadhaar, panFile: pan });
 
-      //Success Alert
       Swal.fire({
         icon: "success",
         title: "KYC Submitted Successfully!",
         text: "Your documents have been uploaded and are under verification.",
-        confirmButtonColor: PRIMARY_COLOR, 
+        confirmButtonColor: PRIMARY_COLOR,
       });
 
       setAadhaar(null);
       setPan(null);
-    } catch (err) {     
-      //Error Alert
+
+    } catch (err) {
       Swal.fire({
         icon: "error",
-        title: "You have already uploaded your file",
-        // text: err.msg ",
-        confirmButtonColor: ERROR_COLOR, 
+        title: "Upload Failed",
+        text: err.message,   // <-- DISPLAY BACKEND ERROR HERE
+        confirmButtonColor: ERROR_COLOR,
       });
     } finally {
       if (timerRef.current) clearInterval(timerRef.current);
       setUploadTime(0);
       setShowSlow(false);
-    }
+    }   
   };
+
 
   return (
     <div
@@ -86,7 +86,7 @@ export default function KYCPage() {
         {/* Header */}
         <div className="flex flex-col items-center mb-8 w-full">
           <div
-            style={{ backgroundColor: PRIMARY_COLOR }} 
+            style={{ backgroundColor: PRIMARY_COLOR }}
             className="w-14 h-14 rounded-full flex items-center justify-center text-white font-semiBold text-xl mb-2 shadow-lg"
           >
             BMPL
@@ -121,7 +121,7 @@ export default function KYCPage() {
               ✕ Remove
             </button>
           ) : (
-            <label 
+            <label
               className="cursor-pointer text-xs font-bold text-green-700 hover:text-green-900 transition-all hover:underline"
             >
               <input
@@ -157,7 +157,7 @@ export default function KYCPage() {
               ✕ Remove
             </button>
           ) : (
-            <label 
+            <label
               className="cursor-pointer text-xs font-bold text-green-700 hover:text-green-900 transition-all hover:underline"
             >
               <input
@@ -176,7 +176,7 @@ export default function KYCPage() {
           type="submit"
           disabled={!aadhaar || !pan || loading}
           className="w-full py-3 rounded-xl font-bold text-white text-lg transition-all duration-300 shadow-md hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-          style={{ backgroundColor: "#fdbb2d", cursor: "pointer" }} 
+          style={{ backgroundColor: "#fdbb2d", cursor: "pointer" }}
         >
           {loading ? (
             <span className="flex items-center gap-2">

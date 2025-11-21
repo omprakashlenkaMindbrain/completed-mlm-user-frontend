@@ -14,6 +14,7 @@ import KYCPage from "../pages/Details/KYC";
 import Plans from "../pages/Details/Plans";
 import Home from "../pages/Home/Home";
 import ProfilePage from "../pages/profile/ProfilePage";
+import Wallet from "../pages/Wallet/Wallet";
 
 function Layout() {
   const location = useLocation();
@@ -49,6 +50,14 @@ function Layout() {
               <ProfilePage />
             </ProtectedRoute>
           }
+        />
+        <Route 
+        path="/wallet"
+        element={
+          <ProtectedRoute>
+            <Wallet />
+          </ProtectedRoute>
+        }
         />
       </Routes>
     </>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
+import BASE_URL from "../../config/api";
 import { useAuth } from "../../context/AuthContext";
 
 export const usePlanUpload = () => {
@@ -20,7 +21,7 @@ export const usePlanUpload = () => {
       formData.append("plan_name", plan_name);
       formData.append("payment_ss", paymentFile);
 
-      const res = await fetch("https://api.mybmpl.com/api/plan", {
+      const res = await fetch(`${BASE_URL}/api/plan`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getaccesstoken}`,

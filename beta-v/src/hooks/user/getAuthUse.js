@@ -1,9 +1,10 @@
 import { useCallback } from "react";
+import BASE_URL from "../../config/api";
 
 export const getAuthUse = () => {
   const getLoggedinuser = useCallback(async (token) => {
     try {
-      const res = await fetch("https://api.mybmpl.com/api/sessions", {
+      const res = await fetch(`${BASE_URL}/api/sessions`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

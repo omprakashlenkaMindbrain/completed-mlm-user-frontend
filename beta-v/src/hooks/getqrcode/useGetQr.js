@@ -1,4 +1,5 @@
 import { useState } from "react";
+import BASE_URL from "../../config/api";
 
 export const useGetQr = () => {
   const [loading, setLoading] = useState(false);
@@ -10,7 +11,7 @@ export const useGetQr = () => {
     setError(null);
 
     try {
-      const res = await fetch("https://api.mybmpl.com/api/admin/qr", {
+      const res = await fetch(`${BASE_URL}/api/admin/qr`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

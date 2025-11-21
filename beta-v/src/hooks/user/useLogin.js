@@ -1,7 +1,9 @@
+import BASE_URL from "../../config/api";
+
 export const useLogin = () => {
   const login = async (credentials) => {
     try {
-      const res = await fetch("https://api.mybmpl.com/api/sessions", {
+      const res = await fetch(`${BASE_URL}/api/sessions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

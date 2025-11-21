@@ -1,4 +1,5 @@
 import { useState } from "react";
+import BASE_URL from "../../config/api";
 
 export const useSignup = () => {
   const [loading, setLoading] = useState(false);
@@ -11,7 +12,7 @@ export const useSignup = () => {
     setSuccess(false);
 
     try {
-      const res = await fetch("https://api.mybmpl.com/api/users", {
+      const res = await fetch(`${BASE_URL}/api/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

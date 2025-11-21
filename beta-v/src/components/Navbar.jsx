@@ -25,6 +25,7 @@ const Navbar = () => {
   const navLinksAfterLogin = [
     { name: "KYC", path: "/kyc", icon: FileText },
     { name: "Plans", path: "/plans", icon: CreditCard },
+    //  { name: "Wallet", path: "/wallet", icon: Wallet },
     { name: "Profile", path: "/profile", icon: User },
   ];
 

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import BASE_URL from "../config/api";
 import { getAuthUse } from "../hooks/user/getAuthUse";
 import { useLogin } from "../hooks/user/useLogin";
 import { useSignup } from "../hooks/user/useSignup";
@@ -199,7 +200,7 @@ export const AuthProvider = ({ children }) => {
 
       // Call Backend API
       try {
-        await fetch("https://api.mybmpl.com/api/sessions", {
+        await fetch(`${BASE_URL}/api/sessions`, {
           method: "DELETE",
           headers: {
             "Authorization": `Bearer ${getaccesstoken}`,

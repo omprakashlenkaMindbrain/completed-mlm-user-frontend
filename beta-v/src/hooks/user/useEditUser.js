@@ -1,4 +1,5 @@
 import { useState } from "react";
+import BASE_URL from "../../config/api";
 import { useAuth } from "../../context/AuthContext";
 
 export const useEditUser = () => {
@@ -13,7 +14,7 @@ export const useEditUser = () => {
     setSuccessMsg(null);
 
     try {
-      const res = await fetch("https://api.mybmpl.com/api/users/me", {
+      const res = await fetch(`${BASE_URL}/api/users/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

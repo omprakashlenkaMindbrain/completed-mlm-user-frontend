@@ -1,4 +1,5 @@
 import { useState } from "react";
+import BASE_URL from "../../config/api";
 import { useAuth } from "../../context/AuthContext";
 
 export const useLogout = () => {
@@ -11,7 +12,7 @@ export const useLogout = () => {
     setError(null);
 
     try {
-      const res = await fetch("https://api.mybmpl.com/api/sessions", {
+      const res = await fetch(`${BASE_URL}/api/sessions`, {
         method: "DELETE",
         credentials: "include",
       });

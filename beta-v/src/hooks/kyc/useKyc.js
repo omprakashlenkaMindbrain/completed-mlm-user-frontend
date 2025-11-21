@@ -1,4 +1,5 @@
 import { useState } from "react";
+import BASE_URL from "../../config/api";
 import { useAuth } from "../../context/AuthContext";
 
 export const useKycUpload = () => {
@@ -12,33 +13,34 @@ export const useKycUpload = () => {
     setError(null);
 
     try {
-      if (!adharFile || !panFile) throw new Error("Both Aadhaar and PAN images are required");
+      if (!adharFile || !panFile)
+        throw new Error("Both Aadhaar and PAN images are required");
 
       const formData = new FormData();
       formData.append("adhara_img", adharFile);
-      formData.append("pan_img", panFile);    
+      formData.append("pan_img", panFile);
 
-      const res = await fetch("https://api.mybmpl.com/api/kyc/upload", {
+      const res = await fetch(`${BASE_URL}/api/kyc/upload`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${getaccesstoken}`, 
+          Authorization: `Bearer ${getaccesstoken}`,
         },
         body: formData,
       });
 
+      // Handle backend error response
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.msg || "Upload failed");
+        throw new Error(errData.msg || errData.message || "Upload failed");
       }
 
       const responseData = await res.json();
-      console.log(responseData);
       setData(responseData);
       return responseData;
     } catch (err) {
-      console.log("Hello")
-      setError(err.msg);
-      throw err;
+      console.log("Caught error:", err.message);
+      setError(err.message); // <-- FIXED
+      throw err;             // You can remove this if you don't want to rethrow
     } finally {
       setLoading(false);
     }

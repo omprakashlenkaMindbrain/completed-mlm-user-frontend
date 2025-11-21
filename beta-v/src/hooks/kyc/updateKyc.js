@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import BASE_URL from "../../config/api";
 import { useAuth } from "../../context/AuthContext";
 
 const MAX_FILE_SIZE = 1048576; // 1MB
@@ -36,7 +37,7 @@ export const useUpdateKyc = () => {
             if (adharaFile) formData.append("adhara_img", adharaFile);
             if (panFile) formData.append("pan_img", panFile);
 
-            const res = await fetch("https://api.mybmpl.com/api/kyc/update", {
+            const res = await fetch(`${BASE_URL}/api/kyc/update`, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${getaccesstoken}`,

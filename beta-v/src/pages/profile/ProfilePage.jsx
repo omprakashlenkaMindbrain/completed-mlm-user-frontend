@@ -1,5 +1,3 @@
-"use client"
-
 import {
   Award,
   BadgeCheck,
@@ -16,6 +14,7 @@ import {
 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import Swal from "sweetalert2"
+import PaymentScreenshotSection from "../../components/PaymentScreenShot"
 import ReferralTreeModal from "../../components/referral-tree-modal"
 import { useAuth } from "../../context/AuthContext"
 import { useUpdateKyc } from "../../hooks/kyc/updateKyc"
@@ -573,6 +572,7 @@ export default function ProfilePage() {
               {uploadError && <p className="text-red-600 mt-3 text-sm">{uploadError}</p>}
               {success && <p className="text-green-600 mt-3 text-sm">Documents updated successfully!</p>}
             </div>
+            <PaymentScreenshotSection />
           </div>
         </div>
       </div>

@@ -15,12 +15,16 @@ import Swal from "sweetalert2";
 import Logo from "../../assets/bmpl.jpg";
 import { useAuth } from "../../context/AuthContext";
 
+const VALID_LEGS = ["left", "right"];
+
 export default function SignupPage() {
   const PRIMARY_COLOR = "#004aad";
   const SECONDARY_COLOR = "#fdbb2d";
   const BG_LIGHT = "#f0f4f8";
 
   const [showPassword, setShowPassword] = useState(false);
+  const [displayTrackingId, setDisplayTrackingId] = useState("");
+  const [blockedTypingAlertShown, setBlockedTypingAlertShown] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -28,16 +32,70 @@ export default function SignupPage() {
     mobno: "",
     trackingId: "",
     password: "",
-    legPosition: "", // <-- Added field
+    legPosition: "",
   });
 
   const { signup, loading, error } = useAuth();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  // Handle paste for tracking ID
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").trim();
+
+    const parts = pasted.split("-");
+    if (parts.length === 2 && VALID_LEGS.includes(parts[1].toLowerCase())) {
+      setDisplayTrackingId(pasted);
+      setFormData((prev) => ({
+        ...prev,
+        trackingId: parts[0],
+        legPosition: parts[1].toLowerCase(),
+      }));
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Tracking ID",
+        text: "Tracking ID must be in the format: BLO0001-left or BLO0001-right",
+        confirmButtonColor: PRIMARY_COLOR,
+      });
+    }
   };
 
+  // Block typing and show Swal only first time
+  const handleKeyDown = (e) => {
+    if (!blockedTypingAlertShown) {
+      Swal.fire({
+        icon: "warning",
+        title: "Cannot Type Here",
+        text: "Dear user, you cannot write here. Please copy your tracking ID and paste it.",
+        confirmButtonColor: PRIMARY_COLOR,
+      });
+      setBlockedTypingAlertShown(true);
+    }
+
+    // Block all typing except paste shortcut
+    if (
+      !(
+        (e.ctrlKey || e.metaKey) &&
+        (e.key === "v" || e.key === "V")
+      ) &&
+      !["ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+    ) {
+      e.preventDefault();
+    }
+  };
+
+  // Handle all other field changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name !== "trackingId") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  // Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -46,13 +104,13 @@ export default function SignupPage() {
       !formData.email ||
       !formData.mobno ||
       !formData.trackingId ||
-      !formData.password ||
-      !formData.legPosition
+      !formData.legPosition ||
+      !formData.password
     ) {
       Swal.fire({
         icon: "warning",
         title: "Missing Fields",
-        text: "Please fill in all fields before continuing.",
+        text: "Please complete all fields and paste a valid Tracking ID.",
         confirmButtonColor: PRIMARY_COLOR,
       });
       return;
@@ -86,10 +144,8 @@ export default function SignupPage() {
               className="w-full h-full object-cover"
             />
           </div>
-          <h1
-            className="text-2xl font-bold mt-3"
-            style={{ color: PRIMARY_COLOR }}
-          >
+
+          <h1 className="text-2xl font-bold mt-3" style={{ color: PRIMARY_COLOR }}>
             Create Your Account
           </h1>
           <p className="text-gray-600 text-sm mt-1">
@@ -98,41 +154,19 @@ export default function SignupPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {[
-            { icon: User, name: "name", placeholder: "Full Name", type: "text" },
-            {
-              icon: Mail,
-              name: "email",
-              placeholder: "Email Address",
-              type: "email",
-            },
-            {
-              icon: Phone,
-              name: "mobno",
-              placeholder: "Phone Number",
-              type: "tel",
-            },
-            {
-              icon: Hash,
-              name: "trackingId",
-              placeholder: "Tracking ID",
-              type: "text",
-            },
+          {/* Name - Email - Phone */}
+          {[{ icon: User, name: "name", placeholder: "Full Name", type: "text" },
+            { icon: Mail, name: "email", placeholder: "Email Address", type: "email" },
+            { icon: Phone, name: "mobno", placeholder: "Phone Number", type: "tel" },
           ].map(({ icon: Icon, name, placeholder, type }) => (
             <div
               key={name}
               className="flex items-center gap-2 border-b border-gray-300 relative"
-              style={{
-                borderBottomColor: "rgb(209, 213, 219)",
-                boxShadow: `0 1px 0 0 transparent`,
-              }}
               onFocus={(e) => {
                 e.currentTarget.style.borderBottomColor = PRIMARY_COLOR;
-                e.currentTarget.style.boxShadow = `0 1px 0 0 ${PRIMARY_COLOR}`;
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderBottomColor = "rgb(209, 213, 219)";
-                e.currentTarget.style.boxShadow = `0 1px 0 0 transparent`;
+                e.currentTarget.style.borderBottomColor = "#D1D5DB";
               }}
             >
               <Icon size={18} className="text-gray-400" />
@@ -144,57 +178,44 @@ export default function SignupPage() {
                 onChange={handleChange}
                 maxLength={name === "mobno" ? 10 : undefined}
                 className={inputClass}
-                style={{
-                  textTransform: name === "name" ? "capitalize" : "none",
-                }}
+                style={{ textTransform: name === "name" ? "capitalize" : "none" }}
               />
             </div>
           ))}
 
-          {/* --- Leg Position DROP DOWN --- */}
+          {/* TRACKING ID FIELD */}
           <div
             className="flex items-center gap-2 border-b border-gray-300 relative"
-            style={{
-              borderBottomColor: "rgb(209, 213, 219)",
-              boxShadow: `0 1px 0 0 transparent`,
-            }}
             onFocus={(e) => {
               e.currentTarget.style.borderBottomColor = PRIMARY_COLOR;
-              e.currentTarget.style.boxShadow = `0 1px 0 0 ${PRIMARY_COLOR}`;
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderBottomColor = "rgb(209, 213, 219)";
-              e.currentTarget.style.boxShadow = `0 1px 0 0 transparent`;
+              e.currentTarget.style.borderBottomColor = "#D1D5DB";
             }}
           >
             <Hash size={18} className="text-gray-400" />
-            <select
-              name="legPosition"
-              value={formData.legPosition}
-              onChange={handleChange}
-              className="w-full px-3 py-2 text-sm outline-none bg-transparent"
-            >
-              <option value="">Select Leg Position</option>
-              <option value="left">Left</option>
-              <option value="right">Right</option>
-            </select>
+            <input
+              type="text"
+              name="trackingId"
+              placeholder="Paste Tracking ID (e.g. BLO0001-left)"
+              value={displayTrackingId}
+              onPaste={handlePaste}
+              onKeyDown={handleKeyDown} // Block typing + Swal
+              className={inputClass}
+            />
           </div>
 
-          {/* Password Field */}
+          {/* LEG POSITION DISPLAY */}
+          <div className="text-sm text-gray-700 mt-1 ml-1">
+            Leg Position:{" "}
+            <span className="font-semibold capitalize">
+              {formData.legPosition || "Not set (paste with '-left' or '-right')"}
+            </span>
+          </div>
+
+          {/* PASSWORD */}
           <div
             className="flex items-center gap-2 border-b border-gray-300 relative"
-            style={{
-              borderBottomColor: "rgb(209, 213, 219)",
-              boxShadow: `0 1px 0 0 transparent`,
-            }}
-            onFocus={(e) => {
-              e.currentTarget.style.borderBottomColor = PRIMARY_COLOR;
-              e.currentTarget.style.boxShadow = `0 1px 0 0 ${PRIMARY_COLOR}`;
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.borderBottomColor = "rgb(209, 213, 219)";
-              e.currentTarget.style.boxShadow = `0 1px 0 0 transparent`;
-            }}
           >
             <Lock size={18} className="text-gray-400" />
             <input
@@ -205,13 +226,11 @@ export default function SignupPage() {
               onChange={handleChange}
               className="w-full px-3 py-2 text-sm pr-10 outline-none bg-transparent"
             />
+
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500"
-              style={{
-                cursor: "pointer",
-              }}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -221,24 +240,25 @@ export default function SignupPage() {
             <p className="text-red-500 text-sm text-center mt-2">{error}</p>
           )}
 
+          {/* SUBMIT */}
           <motion.button
             whileHover={{
               scale: 1.02,
               backgroundColor: PRIMARY_COLOR,
               color: "#fff",
-              boxShadow: `0 0 10px rgba(0, 74, 173, 0.4)`,
             }}
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center text-black py-2 text-sm rounded-lg font-bold mt-4 transition-all duration-300"
-            style={{ backgroundColor: SECONDARY_COLOR, cursor: "pointer" }}
+            className="w-full flex items-center justify-center text-black py-2 text-sm rounded-lg font-bold mt-4"
+            style={{ backgroundColor: SECONDARY_COLOR }}
           >
             {loading ? "Creating Account..." : "Create Account"}
             <ArrowRight size={18} className="ml-2" />
           </motion.button>
         </form>
 
+        {/* FOOTER */}
         <div className="mt-6 text-center text-gray-500 text-sm">
           Already have an account?{" "}
           <Link

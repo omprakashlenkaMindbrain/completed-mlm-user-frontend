@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import Swal from "sweetalert2"
+import MemberIdShare from "../../components/MemberIdShare"
 import PaymentScreenshotSection from "../../components/PaymentScreenShot"
 import ReferralTreeModal from "../../components/referral-tree-modal"
 import { useAuth } from "../../context/AuthContext"
@@ -252,7 +253,9 @@ export default function ProfilePage() {
                   {profile.verified && <BadgeCheck className="w-8 h-8" style={{ color: ICON_COLOR_CONTACT }} />}
                 </div>
 
-                <p className="text-slate-600 mb-3">Member ID: {profile.memId}</p>
+                {/* <p className="text-slate-600 mb-3">Member ID: {profile.memId}</p> */}
+                <MemberIdShare memId={profile.memId} username={profile.name}/>
+
               </div>
 
               <button
@@ -412,8 +415,8 @@ export default function ProfilePage() {
                       maxLength={field === "mobno" ? 10 : undefined}
                       readOnly={!isEditing}
                       className={`w-full px-4 py-2 rounded-lg font-medium transition ${isEditing
-                          ? `bg-slate-50 border-2 border-[${PRIMARY_NAVY}] focus:outline-none focus:border-blue-700`
-                          : "bg-slate-50 border border-slate-200 text-slate-700 cursor-default"
+                        ? `bg-slate-50 border-2 border-[${PRIMARY_NAVY}] focus:outline-none focus:border-blue-700`
+                        : "bg-slate-50 border border-slate-200 text-slate-700 cursor-default"
                         } ${field === "name" ? "capitalize" : ""}`}
                       style={isEditing ? { borderColor: modified ? ICON_COLOR_CONTACT : PRIMARY_NAVY } : {}}
                     />
